@@ -25,6 +25,8 @@ jobs:
         run: |
           cd crud
           mvn clean install -DskipTests
+          cd target
+          ls -al
       - name: Store Artifact
         uses: actions/upload-artifact@v2
         with:
