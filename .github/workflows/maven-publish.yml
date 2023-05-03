@@ -16,7 +16,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          repository: "KaranMesh/${{ matrix.repo }}"
+          repository: "${{ matrix.repo }}"
  # Checkout the current repository
       - name: print directory
         run: |
