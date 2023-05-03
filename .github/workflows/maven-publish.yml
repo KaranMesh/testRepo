@@ -16,14 +16,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          repository: "KaranMesh/${{ matrix.repo }}"
+          ref: ${{ github.head_ref }}
  # Checkout the current repository
       - name: print directory
         run: |
           pwd
           echo ${{ matrix.repo }}
-      - name: Change directory
-        run: cd ${{ matrix.repo }}
       - name: Cache Maven dependencies
         uses: actions/cache@v2
         with:
@@ -36,11 +34,8 @@ jobs:
           java-version: 8
       - name: Build Repository
         run: |
-          cd ..
-          ls -al
           cd ${{ matrix.repo }}
           mvn clean install -DskipTests
-          ls -al
       - name: Store Artifact
         if: matrix.repo == 'testRepo'
         uses: actions/upload-artifact@v2
