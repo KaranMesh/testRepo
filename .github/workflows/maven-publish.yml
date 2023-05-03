@@ -26,8 +26,9 @@ jobs:
           repository: KaranMesh/testrepo2
           path: testrepo2
       - name: Build second repository with Maven
-        run: mvn clean install -DskipTests
-        working-directory: KaranMesh/testrepo2
+        run: |
+          ls -al
+          mvn clean install -DskipTests
       - name: Checkout
         uses: actions/checkout@v3
         with:
