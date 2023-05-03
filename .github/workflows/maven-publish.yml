@@ -19,7 +19,7 @@ jobs:
           repository: "KaranMesh/${{ matrix.repo }}"
  # Checkout the current repository
       - name: print directory
-        run: echo ${{ matrix.repo }}
+        run: pwd
       - name: Cache Maven dependencies
         uses: actions/cache@v2
         with:
