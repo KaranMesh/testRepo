@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        repo: [testRepo] # Add the names of all the repositories you want to build
+        repo: [testrepo2, testRepo] # Add the names of all the repositories you want to build
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -29,13 +29,12 @@ jobs:
           java-version: 8
       - name: Build Repository
         run: |
-          ls -al
-          cd ${{ matrix.repo }} # Change directory to the current repository
           cd crud
           mvn clean install -DskipTests
-          cd target
-          ls -al
+          cd ..
+          cd ${{ matrix.repo }} # Change directory to the current repository
       - name: Store Artifact
+        if: matrix.repo == 'testRepo'
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.repo }}-artifact # Add the repository name to the artifact name
