@@ -23,8 +23,7 @@ jobs:
           java-version: 8
       - name: Build Repositories
         run: |
-          cd ..
-          mvn -B clean install -DskipTests -pl testRepo/crud
+          mvn -B clean install -DskipTests -pl crud
       - name: Store Artifact
         uses: actions/upload-artifact@v2
         with:
