@@ -9,19 +9,7 @@ on:
 jobs:
   build-repositories:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        repo: [testrepo2, testRepo] # Add the names of all the repositories you want to build
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ github.head_ref }}
- # Checkout the current repository
-      - name: print directory
-        run: |
-          pwd
-          echo ${{ matrix.repo }}
       - name: Cache Maven dependencies
         uses: actions/cache@v2
         with:
@@ -32,16 +20,24 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 8
-      - name: Build Repository
-        run: |
-          cd ${{ matrix.repo }}
-          mvn clean install -DskipTests
+      - name: Checkout second repository
+        uses: actions/checkout@v2
+        with:
+          repository: KaranMesh/testrepo2
+          ref: main
+      - name: Build second repository with Maven
+        run: mvn clean install -DskipTests
+        working-directory: KaranMesh/testrepo2
+      - name: Checkout main repository
+        uses: actions/checkout@v2
+      - name: Build main repository with Maven
+        run: mvn clean install -DskipTests
+      
       - name: Store Artifact
-        if: matrix.repo == 'testRepo'
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.repo }}-artifact # Add the repository name to the artifact name
-          path: ${{ matrix.repo }}/crud/target/crud-0.0.1-SNAPSHOT.jar
+          name: crud-artifact # Add the repository name to the artifact name
+          path: testRepo/crud/target/crud-0.0.1-SNAPSHOT.jar
           
   deploy:
     needs: build-repositories
@@ -51,7 +47,7 @@ jobs:
       - name: Download JAR
         uses: actions/download-artifact@v2
         with:
-          name: ${{ github.event.repository.name }}-artifact # Use the current repository name to download the artifact
+          name: crud-artifact # Use the current repository name to download the artifact
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v13
         with:
