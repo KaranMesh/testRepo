@@ -20,16 +20,18 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 8
-      - name: Checkout second repository
-        uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
           repository: KaranMesh/testrepo2
-          ref: main
+          path: testrepo2
       - name: Build second repository with Maven
         run: mvn clean install -DskipTests
         working-directory: KaranMesh/testrepo2
-      - name: Checkout main repository
-        uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          path: testRepo
       - name: Build main repository with Maven
         run: mvn clean install -DskipTests
       
