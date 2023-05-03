@@ -29,8 +29,9 @@ jobs:
           java-version: 8
       - name: Build Repository
         run: |
-          cd crud
+          cd {{ matrix.repo }}
           mvn clean install -DskipTests
+          ls -al
       - name: Store Artifact
         if: matrix.repo == 'testRepo'
         uses: actions/upload-artifact@v2
