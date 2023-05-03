@@ -30,19 +30,25 @@ jobs:
       - name: Store Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: crud
+          name: artifact
           path: crud/target/crud-0.0.1-SNAPSHOT.jar
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+          
+  deploy:
+    name: Deploy to Elastic Beanstalk
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download JAR
+        uses: actions/download-artifact@v2
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-      - name: Deploy to Elastic Beanstalk
-        uses: aws-actions/elastic-beanstalk-deploy@v1
+          name: artifact
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v13
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-          application-name: meshai-dev12-test
-          environment-name: meshai-dev12
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }} #This is referred from Github Secrets
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} #This is referred from Github Secrets
+          use_existing_version_if_available: true
+          application_name: webapp-service #Application name we created in Elastic BeanStalk
+          environment_name: meshai-dev12 #Environment name we created in Elastic BeanStalk
+          version_label: ${{github.SHA}}
+          region: ${{ secrets.AWS_REGION }} #VERY IMPORTANT: AWS Region where initially Applciation was created in AWS EBS. We created in us-east-1 which is N-Virginia
+          deployment_package: crud-0.0.1-SNAPSHOT.jar #download artifacts from previous job
