@@ -29,8 +29,8 @@ jobs:
           java-version: 8
       - name: Build Repository
         run: |
-          ls -al
           cd ..
+          ls -al
           cd ${{ matrix.repo }} # Change directory to the current repository
           cd crud
           mvn clean install -DskipTests
