@@ -28,13 +28,16 @@ jobs:
       - name: Build second repository with Maven
         run: |
           ls -al
+          cd testrepo2
           mvn clean install -DskipTests
       - name: Checkout
         uses: actions/checkout@v3
         with:
           path: testRepo
       - name: Build main repository with Maven
-        run: mvn clean install -DskipTests
+        run: |
+          cd testRepo
+          mvn clean install -DskipTests
       
       - name: Store Artifact
         uses: actions/upload-artifact@v2
