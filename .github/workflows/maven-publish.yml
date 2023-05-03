@@ -16,12 +16,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          repository: "${{ matrix.repo }}"
+          repository: "KaranMesh/${{ matrix.repo }}"
  # Checkout the current repository
       - name: print directory
         run: |
           pwd
           echo ${{ matrix.repo }}
+      - name: Change directory
+        run: cd ${{ matrix.repo }}
       - name: Cache Maven dependencies
         uses: actions/cache@v2
         with:
