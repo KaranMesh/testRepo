@@ -36,6 +36,7 @@ jobs:
           path: testRepo
       - name: Build main repository with Maven
         run: |
+          ls -al
           cd testRepo
           cd crud
           mvn clean install -DskipTests
