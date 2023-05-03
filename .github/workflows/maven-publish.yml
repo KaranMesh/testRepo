@@ -29,10 +29,10 @@ jobs:
           java-version: 8
       - name: Build Repository
         run: |
-          cd crud
-          mvn clean install -DskipTests
           cd ..
           cd ${{ matrix.repo }} # Change directory to the current repository
+          cd crud
+          mvn clean install -DskipTests
       - name: Store Artifact
         if: matrix.repo == 'testRepo'
         uses: actions/upload-artifact@v2
