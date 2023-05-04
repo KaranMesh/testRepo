@@ -26,6 +26,7 @@ jobs:
           token: ${{ secrets.REPO_PAT }}
           repository: KaranMesh/testrepo2
           path: testrepo2
+          ref: master
       - name: Build second repository with Maven
         run: |
           cd testrepo2
