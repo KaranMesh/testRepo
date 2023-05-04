@@ -25,6 +25,7 @@ jobs:
         with:
           repository: KaranMesh/testrepo2
           path: testrepo2
+          ref: main
       - name: Build second repository with Maven
         run: |
           cd testrepo2
