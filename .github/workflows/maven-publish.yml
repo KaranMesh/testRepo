@@ -23,9 +23,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
+          token: ${{ secrets.REPO_PAT }}
           repository: KaranMesh/testrepo2
           path: testrepo2
-          token: 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
       - name: Build second repository with Maven
         run: |
           cd testrepo2
