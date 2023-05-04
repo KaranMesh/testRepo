@@ -1,4 +1,4 @@
-name: Build and Store Artifacts
+name: Build and Deploy App
 
 on:
   push:
