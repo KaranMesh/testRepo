@@ -30,6 +30,7 @@ jobs:
       - name: Build second repository with Maven
         run: |
           cd testrepo2
+          git status
           cd crud
           mvn clean install -DskipTests
       - name: Checkout
