@@ -33,6 +33,8 @@ jobs:
           git fetch origin temp/develop
           git checkout temp/develop
           LATEST_RELEASE=${{ steps.latest-release.outputs.latest_release }}
+          git checkout $LATEST_RELEASE
+          git checkout temp/develop
           if git merge --no-ff $LATEST_RELEASE; then
             git push origin temp/develop
             echo "Merged $LATEST_RELEASE into develop"
