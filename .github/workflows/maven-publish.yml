@@ -33,14 +33,10 @@ jobs:
           git fetch origin temp/develop
           git checkout temp/develop
           LATEST_RELEASE=${{ steps.latest-release.outputs.latest_release }}
-          if git merge --ff-only $LATEST_RELEASE; then
+          if git merge --no-ff $LATEST_RELEASE; then
             git push origin temp/develop
             echo "Merged $LATEST_RELEASE into develop"
           else
-            if [ $? -eq 128 ]; then
-              echo "No new changes to merge. Workflow continues."
-            else
               echo "Merge conflict detected. Workflow will fail."
               exit 1  # Exit with a non-zero status code to indicate failure
-            fi
           fi
