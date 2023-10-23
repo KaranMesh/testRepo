@@ -15,7 +15,7 @@ jobs:
       - name: Checkout dm-parent
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.GIT_PAT }}
+          token: ${{ secrets.REPO_PAT }}
           repository: KaranMesh/testrepo2
           path: testrepo2
       - name: Find latest release branch
