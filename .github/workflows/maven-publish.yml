@@ -1,59 +1,45 @@
-name: Build and Deploy App
+name: Merge Latest Release to Develop
 
 on:
+  schedule:
+    - cron: '*/5 * * * *'  # Run every day at midnight
   push:
     branches:
       - main
-      - master
-  pull_request:
 
 jobs:
-  build-repositories:
+  merge-release-to-develop:
     runs-on: ubuntu-latest
+    
     steps:
-      - name: Cache Maven dependencies
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-maven-
-      - name: Set up Java 8
-        uses: actions/setup-java@v1
-        with:
-          java-version: 8
-      - name: Checkout
+      - name: Checkout dm-parent
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.REPO_PAT }}
-          repository: KaranMesh/testrepo2
+          token: ${{ secrets.GIT_PAT }}
+          repository: testrepo2
           path: testrepo2
-          ref: master
-      - name: Build second repository with Maven
+      - name: Find latest release branch
+        id: latest-release
         run: |
           cd testrepo2
-          git status
-          cd crud
-          mvn clean install -DskipTests
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          path: testRepo
-      - name: Build main repository with Maven
+          git show-ref
+          LATEST_RELEASE=$(git for-each-ref --format="%(refname:short)" | grep -E 'origin/release/[0-9]{4}-[0-9]{2}-[0-9]{2}' | sed 's/^origin\///' | sort -r | head -n 1)
+          echo "::set-output name=latest_release::$LATEST_RELEASE"
+
+      - name: Merge latest release into develop
         run: |
-          ls -al
-          cd testRepo
-          cd crud
-          mvn clean install -DskipTests
-          
-      - name: Deploy to EB
-        uses: einaregilsson/beanstalk-deploy@v13
-        with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }} #This is referred from Github Secrets
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} #This is referred from Github Secrets
-          use_existing_version_if_available: true
-          application_name: webapp-service #Application name we created in Elastic BeanStalk
-          environment_name: meshai-dev12 #Environment name we created in Elastic BeanStalk
-          version_label: ${{github.SHA}}
-          region: ${{ secrets.AWS_REGION }} #VERY IMPORTANT: AWS Region where initially Applciation was created in AWS EBS. We created in us-east-1 which is N-Virginia
-          deployment_package: testRepo/crud/target/crud-0.0.1-SNAPSHOT.jar # Use the current repository name to set the deployment package name
-      
+          cd testrepo2
+          git fetch origin temp/develop
+          git checkout temp/develop
+          LATEST_RELEASE=${{ steps.latest-release.outputs.latest_release }}
+          if git merge --ff-only $LATEST_RELEASE; then
+            git push origin temp/develop
+            echo "Merged $LATEST_RELEASE into develop"
+          else
+            if [ $? -eq 128 ]; then
+              echo "No new changes to merge. Workflow continues."
+            else
+              echo "Merge conflict detected. Workflow will fail."
+              exit 1  # Exit with a non-zero status code to indicate failure
+            fi
+          fi
