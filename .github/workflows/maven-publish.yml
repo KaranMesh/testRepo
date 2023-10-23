@@ -23,15 +23,12 @@ jobs:
         run: |
           cd testrepo2
           git fetch --all
-          git show-ref -d
           LATEST_RELEASE=$(git for-each-ref --format="%(refname:short)" | grep -E 'origin/release/[0-9]{4}-[0-9]{2}-[0-9]{2}' | sed 's/^origin\///' | sort -r | head -n 1)
           echo "::set-output name=latest_release::$LATEST_RELEASE"
 
       - name: Merge latest release into develop
         run: |
           cd testrepo2
-          git fetch origin temp/develop
-          git checkout temp/develop
           LATEST_RELEASE=${{ steps.latest-release.outputs.latest_release }}
           git checkout $LATEST_RELEASE
           git checkout temp/develop
