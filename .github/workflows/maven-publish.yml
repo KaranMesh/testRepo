@@ -39,10 +39,11 @@ jobs:
             git push origin temp/develop
             echo "Merged $LATEST_RELEASE into develop"
           else
-              if [ $? -eq 128 ]; then
-                echo "No new changes to merge. Workflow continues."
-              else
-                echo "Merge conflict detected. Workflow will fail."
-                exit 1  # Exit with a non-zero status code to indicate failure
-              fi
+            echo "$? -eq 128"
+            if [ $? -eq 128 ]; then
+              echo "No new changes to merge. Workflow continues."
+            else
+              echo "Merge conflict detected. Workflow will fail."
+              exit 1  # Exit with a non-zero status code to indicate failure
+            fi
           fi
