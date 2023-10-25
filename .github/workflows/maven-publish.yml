@@ -30,12 +30,18 @@ jobs:
         run: |
           cd testrepo2
           LATEST_RELEASE=${{ steps.latest-release.outputs.latest_release }}
-          git checkout $LATEST_RELEASE
-          git checkout temp/develop
-          if git merge --no-ff $LATEST_RELEASE; then
-            git push origin temp/develop
-            echo "Merged $LATEST_RELEASE into develop"
+          if [ -n "$LATEST_RELEASE" ]; then
+            git checkout $LATEST_RELEASE
+            git checkout temp/develop
+            if git merge --no-ff $LATEST_RELEASE; then
+              git push origin temp/develop
+              echo "Merged $LATEST_RELEASE into develop"
+            else
+              echo "Merge conflict detected. Sending Slack message..."
+              SLACK_MESSAGE="Merge conflict detected while merging $LATEST_RELEASE into develop. Please resolve the conflict."
+              curl -X POST -H 'Content-type: application/json' --data "{'text':'$SLACK_MESSAGE'}" ${{ secrets.SLACK_WEBHOOK_URL }}
+              exit 1  # Exit with a non-zero status code to indicate failure
+            fi
           else
-            echo "Merge conflict detected. Workflow will fail."
-            exit 1  # Exit with a non-zero status code to indicate failure
+            echo "No release branches found to merge."
           fi
