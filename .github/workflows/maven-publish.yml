@@ -35,8 +35,9 @@ jobs:
             git checkout temp/develop
               GITHUB_TOKEN=$GITHUB_TOKEN  # Access the secret
 
+              echo "token - $GITHUB_TOKEN"
               # Create a PR using the GitHub REST API
-              PR_RESPONSE=$(curl -X POST -H "Authorization: Bearer $GITHUB_TOKEN" -d '{
+              PR_RESPONSE=$(curl -X POST -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -d '{
                 "title": "Merge '$LATEST_RELEASE' into develop",
                 "head": "'$LATEST_RELEASE'",
                 "base": "temp/develop"
