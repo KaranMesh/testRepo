@@ -33,6 +33,17 @@ jobs:
           if [ -n "$LATEST_RELEASE" ]; then
             git checkout $LATEST_RELEASE
             git checkout temp/develop
+              GITHUB_TOKEN=${{ secrets.REPO_PAT }}  # Access the secret
+
+              # Create a PR using the GitHub REST API
+              PR_RESPONSE=$(curl -X POST -H "Authorization: token $GITHUB_TOKEN" -d '{
+                "title": "Merge '$LATEST_RELEASE' into develop",
+                "head": "'$LATEST_RELEASE'",
+                "base": "temp/develop"
+              }' "https://api.github.com/repos/KaranMesh/testRepo/pulls")
+
+              # Extract the PR URL from the API response
+              PR_URL=$(echo $PR_RESPONSE | jq -r .html_url)
               REPOSITORY_URL="https://github.com/KaranMesh/testRepo"  # Replace with your repository URL
               SLACK_MESSAGE="Merge conflict detected while merging $LATEST_RELEASE into develop. Please resolve the conflict."
               SLACK_ATTACHMENT='[{"fallback":"View Repository","actions":[{"type":"button","text":"View Repository","url":"'$REPOSITORY_URL'"}]}]'
