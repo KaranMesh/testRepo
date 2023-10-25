@@ -33,7 +33,7 @@ jobs:
           if [ -n "$LATEST_RELEASE" ]; then
             git checkout $LATEST_RELEASE
             git checkout temp/develop
-              GITHUB_TOKEN=${{ secrets.REPO_PAT }}  # Access the secret
+              GITHUB_TOKEN=$GITHUB_TOKEN  # Access the secret
 
               # Create a PR using the GitHub REST API
               PR_RESPONSE=$(curl -X POST -H "Authorization: token $GITHUB_TOKEN" -d '{
