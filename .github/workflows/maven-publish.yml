@@ -33,8 +33,10 @@ jobs:
           if [ -n "$LATEST_RELEASE" ]; then
             git checkout $LATEST_RELEASE
             git checkout temp/develop
-            SLACK_MESSAGE="@channel Merge conflict detected while merging $LATEST_RELEASE into develop. Please resolve the conflict."
-              curl -X POST -H 'Content-type: application/json' --data "{'text':'$SLACK_MESSAGE'}" ${{ secrets.SLACK_WEBHOOK_URL }}
+              REPOSITORY_URL="https://github.com/KaranMesh/testRepo"  # Replace with your repository URL
+              SLACK_MESSAGE="Merge conflict detected while merging $LATEST_RELEASE into develop. Please resolve the conflict."
+              SLACK_ATTACHMENT='[{"fallback":"View Repository","actions":[{"type":"button","text":"View Repository","url":"'$REPOSITORY_URL'"}]}]'
+              curl -X POST -H 'Content-type: application/json' --data "{'text':'$SLACK_MESSAGE','attachments':$SLACK_ATTACHMENT}" ${{ secrets.SLACK_WEBHOOK_URL }}
               exit 1  # Exit with a non-zero status code to indicate failure
             if git merge --no-ff $LATEST_RELEASE; then
               git push origin temp/develop
