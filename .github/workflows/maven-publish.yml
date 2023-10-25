@@ -36,7 +36,7 @@ jobs:
               GITHUB_TOKEN=$GITHUB_TOKEN  # Access the secret
 
               # Create a PR using the GitHub REST API
-              PR_RESPONSE=$(curl -X POST -H "Authorization: token $GITHUB_TOKEN" -d '{
+              PR_RESPONSE=$(curl -X POST -H "Authorization: Bearer $GITHUB_TOKEN" -d '{
                 "title": "Merge '$LATEST_RELEASE' into develop",
                 "head": "'$LATEST_RELEASE'",
                 "base": "temp/develop"
