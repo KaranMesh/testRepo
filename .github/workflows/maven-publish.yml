@@ -40,7 +40,7 @@ jobs:
                 "title": "Merge '$LATEST_RELEASE' into develop",
                 "head": "'$LATEST_RELEASE'",
                 "base": "temp/develop"
-              }' "https://api.github.com/repos/KaranMesh/testRepo/pulls")
+              }' "https://api.github.com/repos/KaranMesh/testrepo2/pulls")
 
               echo "pr URL - $PR_RESPONSE"
               # Extract the PR URL from the API response
