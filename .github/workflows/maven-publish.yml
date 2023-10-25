@@ -44,9 +44,9 @@ jobs:
 
               # Extract the PR URL from the API response
               PR_URL=$(echo $PR_RESPONSE | jq -r .html_url)
-              REPOSITORY_URL="https://github.com/KaranMesh/testRepo"  # Replace with your repository URL
+              
               SLACK_MESSAGE="Merge conflict detected while merging $LATEST_RELEASE into develop. Please resolve the conflict."
-              SLACK_ATTACHMENT='[{"fallback":"View Repository","actions":[{"type":"button","text":"View Repository","url":"'$REPOSITORY_URL'"}]}]'
+              SLACK_ATTACHMENT='[{"fallback":"View Repository","actions":[{"type":"button","text":"View Repository","url":"'$PR_URL'"}]}]'
               curl -X POST -H 'Content-type: application/json' --data "{'text':'$SLACK_MESSAGE','attachments':$SLACK_ATTACHMENT}" ${{ secrets.SLACK_WEBHOOK_URL }}
               exit 1  # Exit with a non-zero status code to indicate failure
             if git merge --no-ff $LATEST_RELEASE; then
