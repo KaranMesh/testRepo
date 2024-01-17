@@ -6,9 +6,11 @@ on:
       from_branch:
         description: 'From branch'
         required: true
+        default: 'main'
       to_branch:
         description: 'To branch'
         required: true
+        default: 'main'
 
 jobs:
   # fetch-repo-list:
