@@ -1,0 +1,63 @@
+name: Reusable Merge workflow 
+
+on:
+  workflow_call:
+    inputs:
+      repository:
+        required: true
+        type: string
+      path:
+        required: true
+        type: string
+      from_branch:
+        required: true
+        type: string
+      to_branch:
+        required: true
+        type: string
+    secrets:
+      REPO_PAT:
+        required: true
+
+jobs:
+  merge-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.REPO_PAT }}
+          repository: ${{ inputs.repository }}
+          path: ${{ inputs.path }}
+
+      - name: Set up GitHub CLI
+        uses: actions/setup-gh@v0.6.0
+        with:
+          gh-version: '1.5.0'
+
+      - name: Merge ${{ inputs.from_branch }} into ${{ inputs.to_branch }}
+        run: |
+          git config --global user.name "KaranMesh"
+          git config --global user.email "karan.sharma@mesh.ai"
+          
+          # Provide the source and target branches
+          from_branch="${{ inputs.from_branch }}"
+          to_branch="${{ inputs.to_branch }}"
+
+          repo="${{ inputs.repository }}"
+          echo -e "Creating PR for $repo from $from_branch to $to_branch"
+          
+          # Create the pull request
+          gh pr create --repo $repo --base $to_branch --head $from_branch --title "merge: $from_branch to $to_branch" --body "This is an automated PR for $repo: $from_branch to $to_branch"
+          echo -e "PR created for $repo"
+          
+          # Get the pull request number for the created PR
+          pr_number=$(gh pr list --repo $repo --base $to_branch --head $from_branch --json number --limit 1 | jq -r '.[0].number')
+          # Merge the pull request
+          if gh pr merge --repo $repo $pr_number --delete-branch; then
+            echo -e "PR merged successfully for $repo"
+          else
+            echo -e "PR merge failed for $repo"
+            exit 1
+          fi
+
