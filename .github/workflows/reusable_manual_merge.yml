@@ -30,10 +30,6 @@ jobs:
           repository: ${{ inputs.repository }}
           path: ${{ inputs.path }}
 
-      - name: Set up GitHub CLI
-        run: |
-          sudo apt install gh
-
       - name: Merge ${{ inputs.from_branch }} into ${{ inputs.to_branch }}
         run: |
           git config --global user.name "KaranMesh"
