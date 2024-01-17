@@ -6,11 +6,9 @@ on:
       from_branch:
         description: 'From branch'
         required: true
-        default: 'main'
       to_branch:
         description: 'To branch'
         required: true
-        default: 'main'
 
 jobs:
   # fetch-repo-list:
@@ -59,7 +57,8 @@ jobs:
     with:
       repository: KaranMesh/${{ matrix.repo }}
       path: ${{ matrix.repo }}
-      branch: 'test-branch'
+      from_branch: ${{inputs.from_branch}}
+      to_branch: ${{inputs.to_branch}}
     secrets: inherit
       
   # success-notification:
