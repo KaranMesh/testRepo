@@ -31,9 +31,8 @@ jobs:
           path: ${{ inputs.path }}
 
       - name: Set up GitHub CLI
-        uses: actions/setup-gh@v0.6.0
-        with:
-          gh-version: '1.5.0'
+        run: |
+          sudo apt install gh
 
       - name: Merge ${{ inputs.from_branch }} into ${{ inputs.to_branch }}
         run: |
