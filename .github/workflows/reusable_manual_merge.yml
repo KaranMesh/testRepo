@@ -53,7 +53,7 @@ jobs:
           # Get the pull request number for the created PR
           pr_number=$(gh pr list --repo $repo --base $to_branch --head $from_branch --json number --limit 1 | jq -r '.[0].number')
           # Merge the pull request
-          if gh pr merge --repo $repo $pr_number --delete-branch; then
+          if gh pr merge --repo $repo $pr_number --delete-branch --merge; then
             echo -e "PR merged successfully for $repo"
           else
             echo -e "PR merge failed for $repo"
