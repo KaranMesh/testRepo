@@ -1,0 +1,32 @@
+name: Build repos and Deploy
+
+on:
+  pull_request:
+    types:
+      - opened
+
+jobs:
+  build-repo:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout testRepo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.REPO_PAT }}
+          repository: KaranMesh/testRepo
+          path: testRepo
+      - name: Switch branch for testRepo
+        run: |
+          cd testRepo
+          git fetch origin main
+          git checkout main
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: '8'
+      - name: Build testRepo
+        run: |
+          cd testRepo
+          mvn clean install -DskipTests
