@@ -1,0 +1,89 @@
+name: Merge Latest Release to Develop
+
+on:
+  workflow_dispatch:
+    inputs:
+      from_branch:
+        description: 'From branch'
+        required: true
+      to_branch:
+        description: 'To branch'
+        required: true
+
+jobs:
+  # fetch-repo-list:
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     active_repos: ${{ steps.fetch-repo.outputs.active_repos }}
+  #   steps:
+  #     - name: Download Repo List from S3
+  #       id: fetch-repo
+  #       run: |
+  #         export AWS_DEFAULT_REGION=ap-south-1
+  #         aws s3 cp s3://meshai-automation/active_repos ./repo-list.txt
+  #         repo_list=$(cat ./repo-list.txt)
+  #         echo "active_repos=$repo_list" >> $GITHUB_OUTPUT
+  #       env:
+  #         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+  #         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          
+  # latest-release-branch:
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     latest_release: ${{ steps.latest-release.outputs.latest_release }}
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v3
+  #       with:
+  #         token: ${{ secrets.GIT_PAT }}
+  #         repository: meshai/mesh-storage-layer
+  #         path: mesh-storage-layer
+  #     - name: Find latest release branch
+  #       id: latest-release
+  #       run: |
+  #         cd mesh-storage-layer
+  #         git fetch --all
+  #         LATEST_RELEASE=$(git for-each-ref --format="%(refname:short)" | grep -E 'origin/release/[0-9]{4}-[0-9]{2}-[0-9]{2}' | sed 's/^origin\///' | sort -r | head -n 1)
+  #         echo "latest_release=$LATEST_RELEASE" >> $GITHUB_OUTPUT
+
+  repos-merge:
+    # needs: [latest-release-branch, fetch-repo-list]
+    # if: ${{ success() }}
+    strategy:
+      fail-fast: false
+      matrix:
+        repo: ['testRepo', 'testrepo2']
+    uses: ./.github/workflows/reusable_manual_merge.yml
+    with:
+      repository: KaranMesh/${{ matrix.repo }}
+      path: ${{ matrix.repo }}
+      branch: 'test-branch'
+    secrets: inherit
+      
+  # success-notification:
+  #   needs: [repos-merge]
+  #   runs-on: ubuntu-latest
+  #   if: ${{ success() }}
+  #   steps:
+  #     - name: Script ran successfully
+  #       run: |
+  #         # Get the timestamp from github.event.created_at
+  #         TIMESTAMP="${{ github.event.created_at }}"
+  #         CURRENT_DATE=$(date -d "${TIMESTAMP}" +'%Y-%m-%d')
+          
+  #         SLACK_MESSAGE=":white_check_mark: The merge script ran successfully on $CURRENT_DATE . Please fix the merge conflicts, if any."
+  #         curl -X POST -H 'Content-type: application/json' --data "{'text':'$SLACK_MESSAGE'}" ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  # failure-notification:
+  #   needs: [repos-merge]
+  #   runs-on: ubuntu-latest
+  #   if: ${{ failure() }}
+  #   steps:
+  #     - name: Script failed at one or more step
+  #       run: |
+  #         # Get the timestamp from github.event.created_at
+  #         TIMESTAMP="${{ github.event.created_at }}"
+  #         CURRENT_DATE=$(date -d "${TIMESTAMP}" +'%Y-%m-%d')
+          
+  #         SLACK_MESSAGE=":x: The merge script encountered an error in one of the jobs on $CURRENT_DATE. Please check the issue"
+  #         curl -X POST -H 'Content-type: application/json' --data "{'text':'$SLACK_MESSAGE'}" ${{ secrets.SLACK_WEBHOOK_URL }}
