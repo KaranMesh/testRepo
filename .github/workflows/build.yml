@@ -31,4 +31,5 @@ jobs:
         run: |
           cd testRepo
           ls
+          cd crud
           mvn clean install -DskipTests
