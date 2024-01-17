@@ -1,4 +1,4 @@
-name: Merge Latest Release to Develop
+name: Manual merge workflow
 
 on:
   workflow_dispatch:
