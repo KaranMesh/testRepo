@@ -27,6 +27,12 @@ jobs:
         run: |
           git config --global user.name "KaranMesh"
           git config --global user.email "karan.sharma@mesh.ai"
+
+          if gh repo view ${{ inputs.repository }} -b ${{ inputs.from_branch }} &> /dev/null; then
+            echo "Branch '${{ inputs.from_branch }}' exists "
+          else
+            echo "Branch '${{ inputs.from_branch }}' does not exist "
+          fi
           
           # Provide the source and target branches
           from_branch="${{ inputs.from_branch }}"
