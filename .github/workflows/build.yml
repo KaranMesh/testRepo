@@ -11,20 +11,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Send notification to Zoom
-        if: always()
+      - name: Send test message to Zoom
         run: |
           STATUS="Success"
-          if [[ '${{ job.status }}' != 'success' ]]; then
-            STATUS="Failure"
-          fi
 
-          curl -X POST \
-            -H 'Content-Type: application/json' \
-            -d "{
-                  \"content\": \"GitHub Action: *${{ github.workflow }}*  
-                  Status: *$STATUS*  
-                  Commit: ${{ github.sha }}\"
-                }" \
-            https://integrations.zoom.us/chat/webhooks/incomingwebhook/0wi7cxtPQ3eCwxGbqa99Iw?format=fields
+          MESSAGE="GitHub Action Test Message
+                    Status: $STATUS
+                    Repo: ${{ github.repository }}
+                    Branch: ${{ github.ref_name }}
+                    Commit: ${{ github.sha }}"
+
+          curl "https://integrations.zoom.us/chat/webhooks/incomingwebhook/0wi7cxtPQ3eCwxGbqa99Iw?format=message" \
+            -X POST \
+            -H "Authorization: 70ToruRKRTerZ4xw170VmQ" \
+            -H "Content-Type: application/json" \
+            -d "$MESSAGE"
       
