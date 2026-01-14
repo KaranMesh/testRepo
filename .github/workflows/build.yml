@@ -33,3 +33,20 @@ jobs:
           ls
           cd crud
           mvn clean install -DskipTests
+      - name: Send notification to Zoom
+        if: always()
+        run: |
+          STATUS="Success"
+          if [[ '${{ job.status }}' != 'success' ]]; then
+            STATUS="Failure"
+          fi
+
+          curl -X POST \
+            -H 'Content-Type: application/json' \
+            -d "{
+                  \"content\": \"GitHub Action: *${{ github.workflow }}*  
+                  Status: *$STATUS*  
+                  Commit: ${{ github.sha }}\"
+                }" \
+            https://integrations.zoom.us/chat/webhooks/incomingwebhook/0wi7cxtPQ3eCwxGbqa99Iw?format=message
+      
