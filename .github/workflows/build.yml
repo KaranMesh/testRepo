@@ -11,28 +11,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout testRepo
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.REPO_PAT }}
-          repository: KaranMesh/testRepo
-          path: testRepo
-      - name: Switch branch for testRepo
-        run: |
-          cd testRepo
-          git fetch origin main
-          git checkout main
-      - name: Set up Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'corretto'
-          java-version: '8'
-      - name: Build testRepo
-        run: |
-          cd testRepo
-          ls
-          cd crud
-          mvn clean install -DskipTests
       - name: Send notification to Zoom
         if: always()
         run: |
@@ -48,5 +26,5 @@ jobs:
                   Status: *$STATUS*  
                   Commit: ${{ github.sha }}\"
                 }" \
-            https://integrations.zoom.us/chat/webhooks/incomingwebhook/0wi7cxtPQ3eCwxGbqa99Iw?format=message
+            https://integrations.zoom.us/chat/webhooks/incomingwebhook/0wi7cxtPQ3eCwxGbqa99Iw?format=fields
       
